@@ -4,12 +4,12 @@ app = Flask(__name__)
 
 # Simulated data
 class Event:
-    def __init__(self, id, title):
-        self.id = id
-        self.title = title
+  def __init__(self, id, title):
+    self.id = id
+    self.title = title
 
-    def to_dict(self):
-        return {"id": self.id, "title": self.title}
+  def to_dict(self):
+    return {"id": self.id, "title": self.title}
 
 # In-memory "database"
 events = [
@@ -21,12 +21,25 @@ events = [
 # Create a new event from JSON input
 @app.route("/events", methods=["POST"])
 def create_event():
-    # TODO: Task 2 - Design and Develop the Code
-
-    # TODO: Task 3 - Implement the Loop and Process Each Element
-
-    # TODO: Task 4 - Return and Handle Results
-    pass
+  # Retrieve JSON data from the request
+  data = request.get_json(silent=True) # reads JSON, invalid of missin JSON returns None
+  
+  # Check the title was provided
+  if not isinstance(data, dict) or not isinstance(data.get("title"), str) or not data["title"].strip():
+    return jsonify({"error": "Title is required"}), 400 # returns 400 if no empty title is provided
+  
+  # Generate unique event ID
+  new_id = max((event.id for event in events), default=0) + 1 # generates unique id higher than existing ids
+  
+  # Create new Event object
+  new_event = Event(new_id, data["title"]) # creates new instance of Event
+  
+  # Add event to events database
+  events.append(new_event) # adds new event to list
+  
+  # Return new event with 201 status code
+  return jsonify(new_event.to_dict()), 201 # returns created event and HTTP 201
+  
 
 # TODO: Task 1 - Define the Problem
 # Update the title of an existing event
