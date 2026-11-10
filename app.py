@@ -16,6 +16,17 @@ events = [
     Event(1, "Tech Meetup"),
     Event(2, "Python Workshop")
 ]
+@app.route("/", methods=["GET"])
+def home():
+  return jsonify({"message": "Welcome to Events API!"})
+
+@app.route("/events", methods=["GET"])
+def get_events():
+  all_events = [event.to_dict() for event in events] # same as 
+  # all_events = []
+  # for event in events:
+  #   all_events.append(event.to_dict())
+  return jsonify(all_events), 200
 
 # TODO: Task 1 - Define the Problem
 # Create a new event from JSON input
